@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('name',50);
-            $table->string('email',100)->unique();
-            $table->string('phone',20);
-            $table->string('password');
+            $table->foreignId('user_id')->constrained()->restrictOnDelete();
+            $table->string('bank_name', 50);
+            $table->string('bank_account_name', 100);
+            $table->string('bank_account_number', 50);
+            $table->string('bank_iban_number', 50);
+            $table->decimal('balance', 16, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('accounts');
     }
 };
