@@ -1,0 +1,1082 @@
+{
+	"info": {
+		"_postman_id": "fintech-users-collection-2026",
+		"name": "fintech",
+		"description": "Fintech API - User Management Endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "fintech"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "List All Users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (!pm.environment.get('base_url')) {",
+									"    pm.environment.set('base_url', 'http://localhost:8000');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has correct structure', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('key');",
+									"    pm.expect(jsonData).to.have.property('msg');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"    pm.expect(jsonData.key).to.eql('success');",
+									"});",
+									"",
+									"pm.test('Data is an array', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "## Documentation\n\n### Description\nRetrieves a list of all active users in the system. Returns an array of user objects with their details. Soft-deleted users are excluded from the results.\n\n### Notes\n- No authentication required\n- Returns all active users only (soft-deleted users excluded)\n- Response follows ResponseTrait standard format\n- Password field is hidden in response\n\n### Request\n- **URL**: `{{base_url}}/api/users`\n- **Method**: `GET`\n- **Content-Type**: `application/json`\n- **Body Parameters**: None\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key, always \"success\" for 200 |\n| msg | string | Response message in Arabic, default \"تم بنجاح\" |\n| data | array | Array of user objects |\n\n#### User Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | User unique identifier |\n| name | string | User full name (max 50 characters) |\n| email | string | User email address (unique) |\n| phone | string | User phone number (max 20 characters) |\n| created_at | string | ISO 8601 timestamp of creation |\n| updated_at | string | ISO 8601 timestamp of last update |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"John Doe\",\n            \"email\": \"john.doe@example.com\",\n            \"phone\": \"1234567890\",\n            \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n            \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n        }\n    ]\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Returns array of users\n- `400 Bad Request`: Failure - Error message in response"
+					},
+					"response": [
+						{
+							"name": "Success - List Users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"John Doe\",\n            \"email\": \"john.doe@example.com\",\n            \"phone\": \"1234567890\",\n            \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n            \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Jane Smith\",\n            \"email\": \"jane.smith@example.com\",\n            \"phone\": \"0987654321\",\n            \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n            \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "Error - Failure Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"فشل في جلب المستخدمين\",\n    \"data\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "Get User by ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (!pm.environment.get('base_url')) {",
+									"    pm.environment.set('base_url', 'http://localhost:8000');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has correct structure', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('key');",
+									"    pm.expect(jsonData).to.have.property('msg');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"    pm.expect(jsonData.key).to.eql('success');",
+									"});",
+									"",
+									"pm.test('Data contains user object', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('object');",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('name');",
+									"    pm.expect(jsonData.data).to.have.property('email');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/:user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":user"
+							],
+							"variable": [
+								{
+									"key": "user",
+									"value": "1",
+									"description": "User ID"
+								}
+							]
+						},
+						"description": "## Documentation\n\n### Description\nRetrieves a specific user by their unique identifier (ID). Returns a single user object with all user details. If the user is not found or is soft-deleted, returns a failure response.\n\n### Notes\n- No authentication required\n- User ID must be a valid integer\n- Soft-deleted users are not returned\n- If user is null, returns failure response with status 400\n- Response follows ResponseTrait standard format\n- Password field is hidden in response\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}`\n- **Method**: `GET`\n- **Content-Type**: `application/json`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID to retrieve |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key (\"success\" or \"failure\") |\n| msg | string | Response message in Arabic |\n| data | object | User object (null if not found) |\n\n#### User Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | User unique identifier |\n| name | string | User full name (max 50 chars) |\n| email | string | User email address (unique) |\n| phone | string | User phone number (max 20 chars) |\n| created_at | string | ISO 8601 timestamp of creation |\n| updated_at | string | ISO 8601 timestamp of last update |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"John Doe\",\n        \"email\": \"john.doe@example.com\",\n        \"phone\": \"1234567890\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n    }\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Returns user object\n- `400 Bad Request`: Failure - User not found or error occurred"
+					},
+					"response": [
+						{
+							"name": "Success - Get User",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/users/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"John Doe\",\n        \"email\": \"john.doe@example.com\",\n        \"phone\": \"1234567890\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n    }\n}"
+						},
+						{
+							"name": "Error - User Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/users/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"999"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"فشل في جلب المستخدم\",\n    \"data\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (!pm.environment.get('base_url')) {",
+									"    pm.environment.set('base_url', 'http://localhost:8000');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test('Status code is 200', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response has correct structure', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property('key');",
+									"        pm.expect(jsonData).to.have.property('msg');",
+									"        pm.expect(jsonData).to.have.property('data');",
+									"        pm.expect(jsonData.key).to.eql('success');",
+									"    });",
+									"    ",
+									"    pm.test('Data contains created user', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData.data).to.be.an('object');",
+									"        pm.expect(jsonData.data).to.have.property('id');",
+									"        pm.expect(jsonData.data).to.have.property('name');",
+									"        pm.expect(jsonData.data).to.have.property('email');",
+									"    });",
+									"} else if (pm.response.code === 422) {",
+									"    pm.test('Status code is 422', function () {",
+									"        pm.response.to.have.status(422);",
+									"    });",
+									"    ",
+									"    pm.test('Validation errors structure', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property('message');",
+									"        pm.expect(jsonData).to.have.property('errors');",
+									"        pm.expect(jsonData.errors).to.be.an('object');",
+									"    });",
+									"} else {",
+									"    pm.test('Status code is 400', function () {",
+									"        pm.response.to.have.status(400);",
+									"    });",
+									"    ",
+									"    pm.test('Failure response structure', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property('key');",
+									"        pm.expect(jsonData).to.have.property('msg');",
+									"        pm.expect(jsonData).to.have.property('data');",
+									"        pm.expect(jsonData.key).to.eql('failure');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "John Doe",
+									"type": "text",
+									"description": "Required. String type. Maximum 50 characters. User's full name."
+								},
+								{
+									"key": "email",
+									"value": "john.doe@example.com",
+									"type": "text",
+									"description": "Required. Valid email format. Must be unique in users table excluding soft-deleted records (where deleted_at is null)."
+								},
+								{
+									"key": "phone",
+									"value": "1234567890",
+									"type": "text",
+									"description": "Required. String type. Maximum 20 characters. User's phone number."
+								},
+								{
+									"key": "password",
+									"value": "password123",
+									"type": "text",
+									"description": "Required. String type. Minimum 8 characters. User's password. Will be automatically hashed by the system."
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "## Documentation\n\n### Description\nCreates a new user in the system with the provided information. All fields are required for user creation. The password is automatically hashed by the system before storage.\n\n### Notes\n- No authentication required\n- All fields are required (name, email, phone, password)\n- Email must be unique (excluding soft-deleted users)\n- Password is automatically hashed by Laravel (no need to hash before sending)\n- Validation occurs before user creation\n- Response follows ResponseTrait standard format\n- Password field is never returned in response\n\n### Request\n- **URL**: `{{base_url}}/api/users`\n- **Method**: `POST`\n- **Content-Type**: `multipart/form-data`\n- **Body Parameters**:\n  | Key | Type | Validation Rules | Description |\n  |-----|------|------------------|-------------|\n  | name | string | required, string, max:50 | User's full name (maximum 50 characters) |\n  | email | string | required, email, unique (excluding soft-deleted) | Valid email format, must be unique in system |\n  | phone | string | required, string, max:20 | User's phone number (maximum 20 characters) |\n  | password | string | required, string, min:8 | User's password (minimum 8 characters, auto-hashed) |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key (\"success\" or \"failure\") |\n| msg | string | Response message in Arabic |\n| data | object | Created user object |\n\n#### User Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | User unique identifier |\n| name | string | User full name |\n| email | string | User email address |\n| phone | string | User phone number |\n| created_at | string | ISO 8601 timestamp of creation |\n| updated_at | string | ISO 8601 timestamp of last update |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"John Doe\",\n        \"email\": \"john.doe@example.com\",\n        \"phone\": \"1234567890\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n    }\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - User created successfully\n- `400 Bad Request`: Failure - Error message in response\n- `422 Unprocessable Entity`: Validation failed - Check errors object for field-specific messages"
+					},
+					"response": [
+						{
+							"name": "Success - User Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "John Doe",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "john.doe@example.com",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "1234567890",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"John Doe\",\n        \"email\": \"john.doe@example.com\",\n        \"phone\": \"1234567890\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n    }\n}"
+						},
+						{
+							"name": "Error - Validation Failed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "invalid-email",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"The given data was invalid.\",\n    \"errors\": {\n        \"name\": [\"The name field is required.\"],\n        \"email\": [\"The email must be a valid email address.\"],\n        \"phone\": [\"The phone field is required.\"],\n        \"password\": [\"The password must be at least 8 characters.\"]\n    }\n}"
+						},
+						{
+							"name": "Error - Duplicate Email",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Jane Smith",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "john.doe@example.com",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "0987654321",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"The given data was invalid.\",\n    \"errors\": {\n        \"email\": [\"The email has already been taken.\"]\n    }\n}"
+						},
+						{
+							"name": "Error - Failure Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "John Doe",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "john.doe@example.com",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "1234567890",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"فشل في إنشاء المستخدم\",\n    \"data\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (!pm.environment.get('base_url')) {",
+									"    pm.environment.set('base_url', 'http://localhost:8000');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test('Status code is 200', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response has correct structure', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property('key');",
+									"        pm.expect(jsonData).to.have.property('msg');",
+									"        pm.expect(jsonData).to.have.property('data');",
+									"        pm.expect(jsonData.key).to.eql('success');",
+									"    });",
+									"    ",
+									"    pm.test('Data contains updated user', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData.data).to.be.an('object');",
+									"        pm.expect(jsonData.data).to.have.property('id');",
+									"    });",
+									"} else if (pm.response.code === 422) {",
+									"    pm.test('Status code is 422', function () {",
+									"        pm.response.to.have.status(422);",
+									"    });",
+									"    ",
+									"    pm.test('Validation errors structure', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property('message');",
+									"        pm.expect(jsonData).to.have.property('errors');",
+									"        pm.expect(jsonData.errors).to.be.an('object');",
+									"    });",
+									"} else {",
+									"    pm.test('Status code is 400', function () {",
+									"        pm.response.to.have.status(400);",
+									"    });",
+									"    ",
+									"    pm.test('Failure response structure', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property('key');",
+									"        pm.expect(jsonData).to.have.property('msg');",
+									"        pm.expect(jsonData).to.have.property('data');",
+									"        pm.expect(jsonData.key).to.eql('failure');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "John Updated",
+									"type": "text",
+									"description": "Optional. String type. Maximum 50 characters. User's full name. Only sent if updating this field."
+								},
+								{
+									"key": "email",
+									"value": "john.updated@example.com",
+									"type": "text",
+									"description": "Optional. Valid email format. Must be unique in users table excluding current user and soft-deleted records. Only sent if updating this field."
+								},
+								{
+									"key": "phone",
+									"value": "9876543210",
+									"type": "text",
+									"description": "Optional. String type. Maximum 20 characters. User's phone number. Only sent if updating this field."
+								},
+								{
+									"key": "password",
+									"value": "newpassword123",
+									"type": "text",
+									"description": "Optional. String type. Minimum 8 characters. User's new password. Will be automatically hashed by the system. Only sent if updating this field."
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/:user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":user"
+							],
+							"variable": [
+								{
+									"key": "user",
+									"value": "1",
+									"description": "User ID"
+								}
+							]
+						},
+						"description": "## Documentation\n\n### Description\nUpdates an existing user's information. All fields are optional - only include the fields you want to update (partial updates supported). The system will only update the fields that are provided in the request.\n\n### Notes\n- No authentication required\n- All fields are optional (partial updates supported)\n- Only send the fields you want to update\n- Email uniqueness is checked excluding the current user and soft-deleted users\n- Password is automatically hashed if provided\n- If user is not found, returns failure response with status 400\n- Response follows ResponseTrait standard format\n- Password field is never returned in response\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}`\n- **Method**: `PUT`\n- **Content-Type**: `multipart/form-data`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID to update |\n- **Body Parameters**:\n  | Key | Type | Validation Rules | Description |\n  |-----|------|------------------|-------------|\n  | name | string | sometimes, string, max:50 | User's full name (maximum 50 characters) |\n  | email | string | sometimes, email, unique (excluding current user and soft-deleted) | Valid email format, must be unique |\n  | phone | string | sometimes, string, max:20 | User's phone number (maximum 20 characters) |\n  | password | string | sometimes, string, min:8 | User's new password (minimum 8 characters, auto-hashed) |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key (\"success\" or \"failure\") |\n| msg | string | Response message in Arabic |\n| data | object | Updated user object |\n\n#### User Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | User unique identifier |\n| name | string | User full name |\n| email | string | User email address |\n| phone | string | User phone number |\n| created_at | string | ISO 8601 timestamp of creation |\n| updated_at | string | ISO 8601 timestamp of last update |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"John Updated\",\n        \"email\": \"john.updated@example.com\",\n        \"phone\": \"1234567890\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T11:00:00.000000Z\"\n    }\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - User updated successfully\n- `400 Bad Request`: Failure - User not found or error occurred\n- `422 Unprocessable Entity`: Validation failed - Check errors object for field-specific messages"
+					},
+					"response": [
+						{
+							"name": "Success - User Updated",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "John Updated",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "john.updated@example.com",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"John Updated\",\n        \"email\": \"john.updated@example.com\",\n        \"phone\": \"1234567890\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T11:00:00.000000Z\"\n    }\n}"
+						},
+						{
+							"name": "Error - User Not Found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "John Updated",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"999"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"User not found with ID: 999\",\n    \"data\": []\n}"
+						},
+						{
+							"name": "Error - Validation Failed",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "invalid-email",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"The given data was invalid.\",\n    \"errors\": {\n        \"email\": [\"The email must be a valid email address.\"],\n        \"password\": [\"The password must be at least 8 characters.\"]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (!pm.environment.get('base_url')) {",
+									"    pm.environment.set('base_url', 'http://localhost:8000');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test('Status code is 200', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response has correct structure', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property('key');",
+									"        pm.expect(jsonData).to.have.property('msg');",
+									"        pm.expect(jsonData).to.have.property('data');",
+									"        pm.expect(jsonData.key).to.eql('success');",
+									"    });",
+									"    ",
+									"    pm.test('Success message is present', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData.msg).to.include('حذف');",
+									"    });",
+									"} else {",
+									"    pm.test('Status code is 400', function () {",
+									"        pm.response.to.have.status(400);",
+									"    });",
+									"    ",
+									"    pm.test('Failure response structure', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property('key');",
+									"        pm.expect(jsonData).to.have.property('msg');",
+									"        pm.expect(jsonData).to.have.property('data');",
+									"        pm.expect(jsonData.key).to.eql('failure');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/:user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":user"
+							],
+							"variable": [
+								{
+									"key": "user",
+									"value": "1",
+									"description": "User ID"
+								}
+							]
+						},
+						"description": "## Documentation\n\n### Description\nSoft deletes a user by their unique identifier. The user is marked as deleted (soft delete) but not permanently removed from the database. Soft-deleted users are excluded from list and get operations but can be restored if needed.\n\n### Notes\n- No authentication required\n- This is a soft delete operation (not permanent deletion)\n- Soft-deleted users are excluded from list and get operations\n- If user is not found, returns failure response with status 400\n- Response follows ResponseTrait standard format\n- The deleted_at timestamp is set on the user record\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}`\n- **Method**: `DELETE`\n- **Content-Type**: `application/json`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID to delete |\n- **Body Parameters**: None\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key (\"success\" or \"failure\") |\n| msg | string | Response message in Arabic |\n| data | array | Empty array (always []) |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم حذف المستخدم بنجاح\",\n    \"data\": []\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - User soft deleted successfully\n- `400 Bad Request`: Failure - User not found or error occurred"
+					},
+					"response": [
+						{
+							"name": "Success - User Deleted",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/users/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم حذف المستخدم بنجاح\",\n    \"data\": []\n}"
+						},
+						{
+							"name": "Error - User Not Found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/users/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"999"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"User not found with ID: 999\",\n    \"data\": []\n}"
+						}
+					]
+				}
+			],
+			"description": "User management endpoints for CRUD operations"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
+
