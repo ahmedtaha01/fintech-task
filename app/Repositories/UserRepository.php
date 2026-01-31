@@ -16,7 +16,7 @@ class UserRepository implements UserRepositoryInterface
      */
     public function all(): Collection
     {
-        return User::all(['id', 'name', 'email', 'phone']);
+        return User::all(['id', 'name', 'email', 'phone', 'created_at']);
     }
 
     /**
@@ -27,7 +27,7 @@ class UserRepository implements UserRepositoryInterface
      */
     public function find(int $id): ?User
     {
-        $user = User::find($id, ['id', 'name', 'email', 'phone']);
+        $user = User::find($id, ['id', 'name', 'email', 'phone', 'created_at']);
 
         if (!$user) {
             throw new Exception("User not found with ID: {$id}");

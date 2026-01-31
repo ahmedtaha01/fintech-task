@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\User\UserResource;
 use App\Services\UserService;
 use App\Traits\ResponseTrait;
 
@@ -38,7 +39,7 @@ class UserController extends Controller
     {
         try {
             $users = $this->userService->getAllUsers();
-            return $this->successWithDataResponse($users);
+            return $this->successWithDataResponse(UserResource::collection($users));
         } catch (\Exception $e) {
             return $this->failureResponse('فشل في جلب المستخدمين');
         }
@@ -55,7 +56,7 @@ class UserController extends Controller
         try {
             $user = $this->userService->getUserById($id);
 
-            return $this->successWithDataResponse($user);
+            return $this->successWithDataResponse(new UserResource($user));
         } catch (\Exception $e) {
             return $this->failureResponse('فشل في جلب المستخدم');
         }
@@ -71,7 +72,7 @@ class UserController extends Controller
     {
         try {
             $user = $this->userService->createUser($request->validated());
-            return $this->successWithDataResponse($user);
+            return $this->successWithDataResponse(new UserResource($user));
         } catch (\Exception $e) {
             return $this->failureResponse('فشل في إنشاء المستخدم');
         }
@@ -88,7 +89,7 @@ class UserController extends Controller
     {
         try {
             $user = $this->userService->updateUser($id, $request->validated());
-            return $this->successWithDataResponse($user);
+            return $this->successWithDataResponse(new UserResource($user));
         }catch (\Exception $e) {
             return $this->failureResponse($e->getMessage());
         }
