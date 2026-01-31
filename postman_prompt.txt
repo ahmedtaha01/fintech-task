@@ -1,0 +1,108 @@
+Act like a senior backend/API engineer + Postman power user working inside Cursor.
+
+GOAL
+Generate a Postman Collection JSON (v2.1) file for THIS codebase containing the provided endpoints,
+with full documentation, examples, and tests — ready to import into Postman.
+
+OUTPUT FILE (MANDATORY)
+- Write exactly ONE file:
+postman_fintech_[name].json , create a folder called postman if doesnt exist and put it inside
+- Do NOT create any other files.
+
+POSTMAN TARGETING (METADATA)
+- workspaceName: "fintech"
+- collectionName: "fintech"
+
+PROJECT CONTEXT
+- Base URL: {{base_url}} you should take the value inside the readme file
+- Auth scheme default: Bearer {{token}}
+- Default headers: Accept: application/json (unless code says otherwise)
+
+IMPORTANT RULES
+1) You ARE allowed to create the JSON export file (Postman collection v2.1).
+2) All response bodies MUST follow the standardized response shapes defined in Traits/Response status codes (success + errors).
+3) All example parameter values MUST be sourced from seeders/fixtures (do not invent ids/slugs/enums).
+- If seeders/fixtures do not contain a value for a field, mark it explicitly as PLACEHOLDER_FROM_CODEBASE_REQUIRED.
+4) All request body parameters MUST be sent as form-data (multipart/form-data) unless code explicitly requires JSON.
+5) Never hardcode secrets. Use variables: {{base_url}}, {{token}}, {{apiKey}}.
+6) URL representation:
+- Use Postman v2.1 URL OBJECT with raw preserved:
+url.raw = "{{base_url}}/path"
+url.host = ["{{base_url}}"]
+url.path = ["...","..."]
+This avoids Postman dropping URLs.
+
+WORKFLOW (DO NOT SKIP)
+STEP 1) Detect response standard (Traits/Response)
+- Scan Traits/Response to identify canonical:
+A) success envelope
+B) error envelope (generic)
+C) validation errors structure (422)
+D) pagination/meta patterns (if any)
+- Summarize these shapes briefly (in the chat output), then use them verbatim in examples + tests.
+
+STEP 2) Collect realistic seeded values (seeders/fixtures/factories)
+- Extract real values for all fields used by endpoints:
+ids, emails, phones, enums, country codes, etc.
+- Also extract invalid values for 400/422 examples.
+
+STEP 3) Infer endpoint details
+- Read routes/controllers/form requests/resources/DTOs/services to determine:
+required vs optional fields, validations, enums, file constraints, status codes, auth requirements.
+- Mark any unknowns explicitly as ASSUMPTION.
+
+STEP 4) Build the Postman Collection JSON (v2.1)
+- Collection schema: https://schema.getpostman.com/json/collection/v2.1.0/collection.json
+- Create folders based on the endpoints listed down.
+- Add ONE request item per endpoint under the folder structure.
+- Each request item MUST include:
+- name
+- description (Markdown docs)
+- request:
+- method
+- header
+- url (OBJECT: raw/host/path/query)
+- body:
+- mode: formdata
+- formdata: [{key,type,value,description}] (type "text" or "file") , (description should be validation rules extracted from endpoint form request file and explained without specific function details)
+- docs :
+- Description , you just descripe what does the endpoint do.
+- Notes ,what to be aware of when sending keys
+- Request :
+- the url
+- method type
+- content-type
+- body parameters , a table contains key , type , validation rules.
+- Response :
+- response structure as a table contains keys returned
+- example of the response with response trait status code
+- event:
+- prerequest script (base_url check, set variables if needed, set it from .env APP_URL)
+- test script:
+- assert status codes
+- assert Traits/Response envelope keys/types
+- assert validation errors structure for 422 exactly
+- response: saved examples (success + relevant errors) matching Traits/Response status code exactly
+
+STEP 5) Verification BEFORE writing the file (MANDATORY)
+- Programmatically validate in memory:
+- Every request has request.method non-empty
+- Every request has request.url.raw non-empty
+- If body exists: body.mode is "formdata" and formdata is array with type for each field
+- No placeholder comments inside JSON (no #, no //)
+- If any check fails, FIX and re-validate.
+
+STEP 6) Write file
+- Write the final collection JSON to: postman_fintech_[name].json
+
+CHAT OUTPUT (EXACT ORDER)
+A) What was generated (collection + folder + request names)
+B) Environment variables required (name | meaning | sample)
+C) Consolidated API docs (Markdown)
+D) Snippets: curl + JS fetch + Python requests per endpoint (multipart/form-data)
+E) Postman scripts (pre-request + tests) per endpoint
+F) Confirm the file path written
+
+ENDPOINTS LIST:
+[Specify the endpoints here, e.g., User @api.php (5-6) or Transaction @api.php (12-18)]
+
