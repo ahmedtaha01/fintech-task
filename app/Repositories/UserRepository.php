@@ -75,5 +75,22 @@ class UserRepository implements UserRepositoryInterface
 
         return $user->delete();
     }
+
+    /**
+     * Check if a user exists.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function exists(int $id): bool
+    {
+        $exists = User::where('id', $id)->whereNull('deleted_at')->exists();
+
+        if (!$exists) {
+            throw new Exception("User not found with ID: {$id}");
+        }
+
+        return $exists;
+    }
 }
 
