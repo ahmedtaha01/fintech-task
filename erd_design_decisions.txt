@@ -1,0 +1,28 @@
+Database Design Decisions - Fintech Task API
+
+This document outlines the key design decisions made for the database schema and their rationale.
+
+1. SOFT DELETES
+   - Users and Accounts: Implemented soft deletes to maintain data integrity.
+   - Transactions: No soft deletes - transactions should never be deleted
+
+
+2. FOREIGN KEY CONSTRAINTS
+   - All foreign keys use `restrictOnDelete()`
+   - Deleting records are delegated to the application level via boot method
+
+
+3. TRANSACTION ID DESIGN
+   - Unique `transaction_id` field provided by payment integration
+   - Enables integration with third-party payment gateways and systems
+
+4. RELATIONSHIP DESIGN
+   - User -> Accounts: One-to-many relationship
+   - Users can have multiple bank accounts
+   - Account -> Transactions: Many-to-many relationship (via sender/receiver)
+   - Accounts can participate in multiple transactions as sender or receiver
+
+5. ROW-LEVEL LOCKING
+    - Account balance updates use `lockForUpdate()` for pessimistic locking
+    - Prevents race conditions in concurrent transaction scenarios
+
