@@ -17,7 +17,7 @@ class AccountRepository implements AccountRepositoryInterface
      */
     public function all(int $userId): Collection
     {
-        return Account::where('user_id', $userId)->get(['id', 'bank_name', 'bank_account_name', 'bank_account_number', 'bank_iban_number', 'balance', 'created_at', 'updated_at']);
+        return Account::where('user_id', $userId)->get(['id', 'bank_name', 'bank_account_name', 'bank_account_number', 'bank_iban_number', 'balance', 'created_at']);
     }
 
     /**
