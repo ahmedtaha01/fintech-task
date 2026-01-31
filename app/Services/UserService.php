@@ -82,5 +82,17 @@ class UserService
     {
         return $this->userRepository->delete($id);
     }
+
+    /**
+     * Verify that the user exists.
+     *
+     * @param int $id
+     * @return bool
+     * @throws ModelNotFoundException
+     */
+    public function verifyUserExists(int $id): bool
+    {
+        return $this->userRepository->exists($id);
+    }
 }
 

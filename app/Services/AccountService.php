@@ -52,12 +52,12 @@ class AccountService
     /**
      * Get an account by ID.
      *
-     * @param int $id
+     * @param int $accountId
      * @return Account|null
      */
-    public function getAccountById(int $id): ?Account
+    public function getAccountById(int $accountId): ?Account
     {
-        $account = $this->accountRepository->find($id);
+        $account = $this->accountRepository->find($accountId);
         return $account;
     }
 
