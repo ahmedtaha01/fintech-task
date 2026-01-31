@@ -45,5 +45,13 @@ interface UserRepositoryInterface
      * @return bool
      */
     public function delete(int $id): bool;
+
+    /**
+     * Check if a user exists.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function exists(int $id): bool;
 }
 
