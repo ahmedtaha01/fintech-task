@@ -100,3 +100,5 @@ Import these collections into Postman to test the API endpoints.
 
 ### ERD diagram
 https://drive.google.com/file/d/1Y3kMYU8_3elSC2h8MocT3yIi5BK4v_nD/view?usp=drive_link
+
+**Note:** Key database design decisions and their rationale are documented in `erd_design_decisions.txt`.
