@@ -23,6 +23,14 @@ interface AccountRepositoryInterface
     public function find(int $id): ?Account;
 
     /**
+     * Find an account by ID and lock it for update.
+     *
+     * @param int $id
+     * @return Account|null
+     */
+    public function findForUpdate(int $id): ?Account;
+
+    /**
      * Create a new account.
      *
      * @param array $data

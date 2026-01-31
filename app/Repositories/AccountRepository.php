@@ -38,6 +38,25 @@ class AccountRepository implements AccountRepositoryInterface
     }
 
     /**
+     * Find an account by ID and lock it for update.
+     *
+     * @param int $id
+     * @return Account|null
+     */
+    public function findForUpdate(int $id): ?Account
+    {
+        $account = Account::where('id', $id)
+            ->lockForUpdate()
+            ->first(['id', 'user_id', 'bank_name', 'bank_account_name', 'bank_account_number', 'bank_iban_number', 'balance', 'created_at']);
+        
+        if (!$account) {
+            throw new Exception("Account not found with ID: {$id}");
+        }
+        
+        return $account;
+    }
+
+    /**
      * Create a new account.
      *
      * @param array $data
