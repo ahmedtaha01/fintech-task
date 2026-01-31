@@ -25,8 +25,8 @@ class Account extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getCreatedAtFormattedAttribute($value)
+    public function getCreatedAtFormattedAttribute()
     {
-        return Carbon::parse($value)->format('Y-m-d H:i:s');
+        return Carbon::parse($this->created_at)->format('Y-m-d H:i:s');
     }
 }
