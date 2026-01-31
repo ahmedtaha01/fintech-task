@@ -43,7 +43,21 @@
 									"pm.test('Data is an array', function () {",
 									"    const jsonData = pm.response.json();",
 									"    pm.expect(jsonData.data).to.be.an('array');",
-									"});"
+									"});",
+									"",
+									"if (jsonData.data.length > 0) {",
+									"    pm.test('Account object has required fields', function () {",
+									"        const account = jsonData.data[0];",
+									"        pm.expect(account).to.have.property('id');",
+									"        pm.expect(account).to.have.property('user_id');",
+									"        pm.expect(account).to.have.property('bank_name');",
+									"        pm.expect(account).to.have.property('bank_account_name');",
+									"        pm.expect(account).to.have.property('bank_account_number');",
+									"        pm.expect(account).to.have.property('bank_iban_number');",
+									"        pm.expect(account).to.have.property('balance');",
+									"        pm.expect(account).to.have.property('created_at');",
+									"    });",
+									"}"
 								],
 								"type": "text/javascript"
 							}
@@ -77,7 +91,7 @@
 								}
 							]
 						},
-						"description": "## Documentation\n\n### Description\nRetrieves a list of all accounts belonging to a specific user. Returns an array of account objects with their details. Soft-deleted accounts are excluded from the results.\n\n### Notes\n- No authentication required\n- Returns all active accounts for the specified user only (soft-deleted accounts excluded)\n- Response follows ResponseTrait standard format\n- Accounts are automatically scoped to the user from the route parameter\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts`\n- **Method**: `GET`\n- **Content-Type**: `application/json`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID to retrieve accounts for |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key, always \"success\" for 200 |\n| msg | string | Response message in Arabic, default \"تم بنجاح\" |\n| data | array | Array of account objects |\n\n#### Account Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | Account unique identifier |\n| bank_name | string | Bank name (max 50 characters) |\n| bank_account_name | string | Account holder name (max 100 characters) |\n| bank_account_number | string | Bank account number (max 50 characters) |\n| bank_iban_number | string | IBAN number (max 50 characters) |\n| balance | decimal | Account balance (decimal with 2 decimal places) |\n| created_at | string | ISO 8601 timestamp of creation |\n| updated_at | string | ISO 8601 timestamp of last update |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"bank_name\": \"Example Bank\",\n            \"bank_account_name\": \"John Doe\",\n            \"bank_account_number\": \"1234567890\",\n            \"bank_iban_number\": \"GB82WEST12345698765432\",\n            \"balance\": \"5000.00\",\n            \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n            \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n        }\n    ]\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Returns array of accounts\n- `400 Bad Request`: Failure - Error message in response"
+						"description": "## Documentation\n\n### Description\nRetrieves a list of all accounts belonging to a specific user. Returns an array of account objects with their details. Soft-deleted accounts are excluded from the results. Accounts are automatically scoped to the user from the route parameter.\n\n### Notes\n- No authentication required\n- Returns all active accounts for the specified user only (soft-deleted accounts excluded)\n- Response follows ResponseTrait standard format\n- Accounts are automatically scoped to the user from the route parameter\n- User ID must exist, otherwise returns error\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts`\n- **Method**: `GET`\n- **Content-Type**: `application/json`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID to retrieve accounts for |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key, always \"success\" for 200 |\n| msg | string | Response message in Arabic, default \"تم بنجاح\" |\n| data | array | Array of account objects |\n\n#### Account Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | Account unique identifier |\n| user_id | integer | User ID that owns this account |\n| bank_name | string | Bank name (max 50 characters) |\n| bank_account_name | string | Account holder name (max 100 characters) |\n| bank_account_number | string | Bank account number (max 50 characters) |\n| bank_iban_number | string | IBAN number (max 50 characters) |\n| balance | decimal | Account balance (decimal with 2 decimal places, minimum 0) |\n| created_at | string | Formatted creation timestamp (Y-m-d H:i:s) |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"user_id\": 1,\n            \"bank_name\": \"Example Bank Inc\",\n            \"bank_account_name\": \"John Doe\",\n            \"bank_account_number\": \"1234567890\",\n            \"bank_iban_number\": \"GB82WEST12345698765432\",\n            \"balance\": \"5000.00\",\n            \"created_at\": \"2026-01-30 10:00:00\"\n        }\n    ]\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Returns array of accounts\n- `400 Bad Request`: Failure - Error message in response"
 					},
 					"response": [
 						{
@@ -114,7 +128,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"bank_name\": \"Example Bank\",\n            \"bank_account_name\": \"John Doe\",\n            \"bank_account_number\": \"1234567890\",\n            \"bank_iban_number\": \"GB82WEST12345698765432\",\n            \"balance\": \"5000.00\",\n            \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n            \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n        },\n        {\n            \"id\": 2,\n            \"bank_name\": \"Another Bank\",\n            \"bank_account_name\": \"John Doe\",\n            \"bank_account_number\": \"0987654321\",\n            \"bank_iban_number\": \"US64SVBKUS6S3300958879\",\n            \"balance\": \"2500.50\",\n            \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n            \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n        }\n    ]\n}"
+							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"user_id\": 1,\n            \"bank_name\": \"Example Bank Inc\",\n            \"bank_account_name\": \"John Doe\",\n            \"bank_account_number\": \"1234567890\",\n            \"bank_iban_number\": \"GB82WEST12345698765432\",\n            \"balance\": \"5000.00\",\n            \"created_at\": \"2026-01-30 10:00:00\"\n        },\n        {\n            \"id\": 2,\n            \"user_id\": 1,\n            \"bank_name\": \"Another Bank Ltd\",\n            \"bank_account_name\": \"John Doe\",\n            \"bank_account_number\": \"0987654321\",\n            \"bank_iban_number\": \"US64SVBKUS6S3300958879\",\n            \"balance\": \"2500.50\",\n            \"created_at\": \"2026-01-30 10:00:00\"\n        }\n    ]\n}"
 						},
 						{
 							"name": "Error - Failure Response",
@@ -188,8 +202,13 @@
 									"    const jsonData = pm.response.json();",
 									"    pm.expect(jsonData.data).to.be.an('object');",
 									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('user_id');",
 									"    pm.expect(jsonData.data).to.have.property('bank_name');",
+									"    pm.expect(jsonData.data).to.have.property('bank_account_name');",
+									"    pm.expect(jsonData.data).to.have.property('bank_account_number');",
+									"    pm.expect(jsonData.data).to.have.property('bank_iban_number');",
 									"    pm.expect(jsonData.data).to.have.property('balance');",
+									"    pm.expect(jsonData.data).to.have.property('created_at');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -230,7 +249,7 @@
 								}
 							]
 						},
-						"description": "## Documentation\n\n### Description\nRetrieves a specific account by its unique identifier (ID). The account must belong to the specified user from the route parameter. Returns a single account object with all account details.\n\n### Notes\n- No authentication required\n- Account ID must be a valid integer\n- Account must belong to the user specified in the route (ownership verification)\n- Soft-deleted accounts are not returned\n- If account is not found or doesn't belong to user, returns failure response with status 400\n- Response follows ResponseTrait standard format\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts/{account}`\n- **Method**: `GET`\n- **Content-Type**: `application/json`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID (must own the account) |\n  | account | integer | Yes | Account ID to retrieve |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key (\"success\" or \"failure\") |\n| msg | string | Response message in Arabic |\n| data | object | Account object |\n\n#### Account Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | Account unique identifier |\n| bank_name | string | Bank name (max 50 chars) |\n| bank_account_name | string | Account holder name (max 100 chars) |\n| bank_account_number | string | Bank account number (max 50 chars) |\n| bank_iban_number | string | IBAN number (max 50 chars) |\n| balance | decimal | Account balance (decimal with 2 decimal places) |\n| created_at | string | ISO 8601 timestamp of creation |\n| updated_at | string | ISO 8601 timestamp of last update |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"bank_name\": \"Example Bank\",\n        \"bank_account_name\": \"John Doe\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n    }\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Returns account object\n- `400 Bad Request`: Failure - Account not found, doesn't belong to user, or error occurred"
+						"description": "## Documentation\n\n### Description\nRetrieves a single account by its unique identifier for a specific user. Returns the account object with all its details. The account must belong to the specified user, otherwise an error is returned. If the account is not found or has been soft-deleted, an error response is returned.\n\n### Notes\n- No authentication required\n- User ID must exist\n- Account must belong to the specified user (ownership verification)\n- Returns 400 error if user not found, account not found, or ownership mismatch\n- Response follows ResponseTrait standard format\n- Account is returned using AccountResource for consistent formatting\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts/{account}`\n- **Method**: `GET`\n- **Content-Type**: `application/json`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID that owns the account |\n  | account | integer | Yes | Account unique identifier |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key, always \"success\" for 200 |\n| msg | string | Response message in Arabic, default \"تم بنجاح\" |\n| data | object | Account object |\n\n#### Account Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | Account unique identifier |\n| user_id | integer | User ID that owns this account |\n| bank_name | string | Bank name (max 50 characters) |\n| bank_account_name | string | Account holder name (max 100 characters) |\n| bank_account_number | string | Bank account number (max 50 characters) |\n| bank_iban_number | string | IBAN number (max 50 characters) |\n| balance | decimal | Account balance (decimal with 2 decimal places, minimum 0) |\n| created_at | string | Formatted creation timestamp (Y-m-d H:i:s) |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"user_id\": 1,\n        \"bank_name\": \"Example Bank Inc\",\n        \"bank_account_name\": \"John Doe\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30 10:00:00\"\n    }\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Returns account object\n- `400 Bad Request`: Failure - User not found, account not found, or ownership mismatch"
 					},
 					"response": [
 						{
@@ -268,7 +287,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"bank_name\": \"Example Bank\",\n        \"bank_account_name\": \"John Doe\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n    }\n}"
+							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"user_id\": 1,\n        \"bank_name\": \"Example Bank Inc\",\n        \"bank_account_name\": \"John Doe\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30 10:00:00\"\n    }\n}"
 						},
 						{
 							"name": "Error - Account Not Found",
@@ -308,7 +327,7 @@
 							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"Account not found with ID: 999\",\n    \"data\": []\n}"
 						},
 						{
-							"name": "Error - Account Ownership Mismatch",
+							"name": "Error - Ownership Mismatch",
 							"originalRequest": {
 								"method": "GET",
 								"header": [
@@ -342,7 +361,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"الحساب لا ينتمي إلى هذا المستخدم\",\n    \"data\": []\n}"
+							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"Account does not belong to this user\",\n    \"data\": []\n}"
 						}
 					]
 				},
@@ -364,50 +383,30 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if (pm.response.code === 200) {",
-									"    pm.test('Status code is 200', function () {",
-									"        pm.response.to.have.status(200);",
-									"    });",
-									"    ",
-									"    pm.test('Response has correct structure', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData).to.have.property('key');",
-									"        pm.expect(jsonData).to.have.property('msg');",
-									"        pm.expect(jsonData).to.have.property('data');",
-									"        pm.expect(jsonData.key).to.eql('success');",
-									"    });",
-									"    ",
-									"    pm.test('Data contains created account', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData.data).to.be.an('object');",
-									"        pm.expect(jsonData.data).to.have.property('id');",
-									"        pm.expect(jsonData.data).to.have.property('bank_name');",
-									"        pm.expect(jsonData.data).to.have.property('balance');",
-									"    });",
-									"} else if (pm.response.code === 422) {",
-									"    pm.test('Status code is 422', function () {",
-									"        pm.response.to.have.status(422);",
-									"    });",
-									"    ",
-									"    pm.test('Validation errors structure', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData).to.have.property('message');",
-									"        pm.expect(jsonData).to.have.property('errors');",
-									"        pm.expect(jsonData.errors).to.be.an('object');",
-									"    });",
-									"} else {",
-									"    pm.test('Status code is 400', function () {",
-									"        pm.response.to.have.status(400);",
-									"    });",
-									"    ",
-									"    pm.test('Failure response structure', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData).to.have.property('key');",
-									"        pm.expect(jsonData).to.have.property('msg');",
-									"        pm.expect(jsonData).to.have.property('data');",
-									"        pm.expect(jsonData.key).to.eql('failure');",
-									"    });",
-									"}"
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has correct structure', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('key');",
+									"    pm.expect(jsonData).to.have.property('msg');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"    pm.expect(jsonData.key).to.eql('success');",
+									"});",
+									"",
+									"pm.test('Data contains account object', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('object');",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('user_id');",
+									"    pm.expect(jsonData.data).to.have.property('bank_name');",
+									"    pm.expect(jsonData.data).to.have.property('bank_account_name');",
+									"    pm.expect(jsonData.data).to.have.property('bank_account_number');",
+									"    pm.expect(jsonData.data).to.have.property('bank_iban_number');",
+									"    pm.expect(jsonData.data).to.have.property('balance');",
+									"    pm.expect(jsonData.data).to.have.property('created_at');",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -427,33 +426,33 @@
 							"formdata": [
 								{
 									"key": "bank_name",
-									"value": "Example Bank",
+									"value": "Example Bank Inc",
 									"type": "text",
-									"description": "Required. String type. Maximum 50 characters. Name of the bank."
+									"description": "Bank name. Required. Must be a string with maximum 50 characters."
 								},
 								{
 									"key": "bank_account_name",
 									"value": "John Doe",
 									"type": "text",
-									"description": "Required. String type. Maximum 100 characters. Account holder's name."
+									"description": "Account holder name. Required. Must be a string with maximum 100 characters."
 								},
 								{
 									"key": "bank_account_number",
 									"value": "1234567890",
 									"type": "text",
-									"description": "Required. String type. Maximum 50 characters. Bank account number."
+									"description": "Bank account number. Required. Must be a string with maximum 50 characters."
 								},
 								{
 									"key": "bank_iban_number",
 									"value": "GB82WEST12345698765432",
 									"type": "text",
-									"description": "Required. String type. Maximum 50 characters. IBAN (International Bank Account Number)."
+									"description": "IBAN number. Required. Must be a string with maximum 50 characters."
 								},
 								{
 									"key": "balance",
 									"value": "5000.00",
 									"type": "text",
-									"description": "Required. Numeric type. Minimum value 0. Initial account balance. Balance can only be modified through transactions, not via update endpoint."
+									"description": "Account balance. Required. Must be a numeric value with minimum 0. Can be decimal with 2 decimal places."
 								}
 							]
 						},
@@ -476,7 +475,7 @@
 								}
 							]
 						},
-						"description": "## Documentation\n\n### Description\nCreates a new account for the specified user. All fields are required for account creation. The user_id is automatically extracted from the route parameter and does not need to be sent in the request body.\n\n### Notes\n- No authentication required\n- All fields are required (bank_name, bank_account_name, bank_account_number, bank_iban_number, balance)\n- user_id is automatically set from the route parameter (not sent in body)\n- Balance must be a positive number (minimum 0)\n- Balance can only be modified through transactions, not via the update endpoint\n- Validation occurs before account creation\n- Response follows ResponseTrait standard format\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts`\n- **Method**: `POST`\n- **Content-Type**: `multipart/form-data`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID to create account for |\n- **Body Parameters**:\n  | Key | Type | Validation Rules | Description |\n  |-----|------|------------------|-------------|\n  | bank_name | string | required, string, max:50 | Name of the bank (maximum 50 characters) |\n  | bank_account_name | string | required, string, max:100 | Account holder's name (maximum 100 characters) |\n  | bank_account_number | string | required, string, max:50 | Bank account number (maximum 50 characters) |\n  | bank_iban_number | string | required, string, max:50 | IBAN number (maximum 50 characters) |\n  | balance | numeric | required, numeric, min:0 | Initial account balance (minimum 0) |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key (\"success\" or \"failure\") |\n| msg | string | Response message in Arabic |\n| data | object | Created account object |\n\n#### Account Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | Account unique identifier |\n| bank_name | string | Bank name |\n| bank_account_name | string | Account holder name |\n| bank_account_number | string | Bank account number |\n| bank_iban_number | string | IBAN number |\n| balance | decimal | Account balance |\n| created_at | string | ISO 8601 timestamp of creation |\n| updated_at | string | ISO 8601 timestamp of last update |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"bank_name\": \"Example Bank\",\n        \"bank_account_name\": \"John Doe\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n    }\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Account created successfully\n- `400 Bad Request`: Failure - Error message in response\n- `422 Unprocessable Entity`: Validation failed - Check errors object for field-specific messages"
+						"description": "## Documentation\n\n### Description\nCreates a new account for a specific user. All fields are required. The user_id is automatically set from the route parameter. The balance must be a numeric value greater than or equal to 0.\n\n### Notes\n- No authentication required\n- User ID must exist in the route parameter\n- All fields are required\n- Balance must be numeric and >= 0\n- User ID is automatically set from route parameter (cannot be changed in body)\n- Response follows ResponseTrait standard format\n- Account is returned using AccountResource for consistent formatting\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts`\n- **Method**: `POST`\n- **Content-Type**: `multipart/form-data`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID to create account for |\n\n#### Body Parameters\n| Key | Type | Required | Validation Rules |\n|-----|------|----------|-----------------|\n| bank_name | string | Yes | Required, string, max:50 |\n| bank_account_name | string | Yes | Required, string, max:100 |\n| bank_account_number | string | Yes | Required, string, max:50 |\n| bank_iban_number | string | Yes | Required, string, max:50 |\n| balance | numeric | Yes | Required, numeric, min:0 |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key, always \"success\" for 200 |\n| msg | string | Response message in Arabic, default \"تم بنجاح\" |\n| data | object | Created account object |\n\n#### Account Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | Account unique identifier |\n| user_id | integer | User ID that owns this account |\n| bank_name | string | Bank name (max 50 characters) |\n| bank_account_name | string | Account holder name (max 100 characters) |\n| bank_account_number | string | Bank account number (max 50 characters) |\n| bank_iban_number | string | IBAN number (max 50 characters) |\n| balance | decimal | Account balance (decimal with 2 decimal places, minimum 0) |\n| created_at | string | Formatted creation timestamp (Y-m-d H:i:s) |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"user_id\": 1,\n        \"bank_name\": \"Example Bank Inc\",\n        \"bank_account_name\": \"John Doe\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30 10:00:00\"\n    }\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Account created and returned\n- `400 Bad Request`: Failure - Error message in response\n- `422 Unprocessable Entity`: Validation errors - Laravel validation error structure"
 					},
 					"response": [
 						{
@@ -495,7 +494,7 @@
 									"formdata": [
 										{
 											"key": "bank_name",
-											"value": "Example Bank",
+											"value": "Example Bank Inc",
 											"type": "text"
 										},
 										{
@@ -543,7 +542,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"bank_name\": \"Example Bank\",\n        \"bank_account_name\": \"John Doe\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T10:00:00.000000Z\"\n    }\n}"
+							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"user_id\": 1,\n        \"bank_name\": \"Example Bank Inc\",\n        \"bank_account_name\": \"John Doe\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30 10:00:00\"\n    }\n}"
 						},
 						{
 							"name": "Error - Validation Failed",
@@ -561,21 +560,6 @@
 									"formdata": [
 										{
 											"key": "bank_name",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "bank_account_name",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "bank_account_number",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "bank_iban_number",
 											"value": "",
 											"type": "text"
 										},
@@ -609,7 +593,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"message\": \"The given data was invalid.\",\n    \"errors\": {\n        \"bank_name\": [\"The bank name field is required.\"],\n        \"bank_account_name\": [\"The bank account name field is required.\"],\n        \"bank_account_number\": [\"The bank account number field is required.\"],\n        \"bank_iban_number\": [\"The bank iban number field is required.\"],\n        \"balance\": [\"The balance must be at least 0.\"]\n    }\n}"
+							"body": "{\n    \"message\": \"The bank name field is required. (and 4 more errors)\",\n    \"errors\": {\n        \"bank_name\": [\"The bank name field is required.\"],\n        \"bank_account_name\": [\"The bank account name field is required.\"],\n        \"bank_account_number\": [\"The bank account number field is required.\"],\n        \"bank_iban_number\": [\"The bank iban number field is required.\"],\n        \"balance\": [\"The balance must be at least 0.\"]\n    }\n}"
 						},
 						{
 							"name": "Error - Failure Response",
@@ -627,7 +611,7 @@
 									"formdata": [
 										{
 											"key": "bank_name",
-											"value": "Example Bank",
+											"value": "Example Bank Inc",
 											"type": "text"
 										},
 										{
@@ -697,48 +681,25 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if (pm.response.code === 200) {",
-									"    pm.test('Status code is 200', function () {",
-									"        pm.response.to.have.status(200);",
-									"    });",
-									"    ",
-									"    pm.test('Response has correct structure', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData).to.have.property('key');",
-									"        pm.expect(jsonData).to.have.property('msg');",
-									"        pm.expect(jsonData).to.have.property('data');",
-									"        pm.expect(jsonData.key).to.eql('success');",
-									"    });",
-									"    ",
-									"    pm.test('Data contains updated account', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData.data).to.be.an('object');",
-									"        pm.expect(jsonData.data).to.have.property('id');",
-									"    });",
-									"} else if (pm.response.code === 422) {",
-									"    pm.test('Status code is 422', function () {",
-									"        pm.response.to.have.status(422);",
-									"    });",
-									"    ",
-									"    pm.test('Validation errors structure', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData).to.have.property('message');",
-									"        pm.expect(jsonData).to.have.property('errors');",
-									"        pm.expect(jsonData.errors).to.be.an('object');",
-									"    });",
-									"} else {",
-									"    pm.test('Status code is 400', function () {",
-									"        pm.response.to.have.status(400);",
-									"    });",
-									"    ",
-									"    pm.test('Failure response structure', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData).to.have.property('key');",
-									"        pm.expect(jsonData).to.have.property('msg');",
-									"        pm.expect(jsonData).to.have.property('data');",
-									"        pm.expect(jsonData.key).to.eql('failure');",
-									"    });",
-									"}"
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has correct structure', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('key');",
+									"    pm.expect(jsonData).to.have.property('msg');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"    pm.expect(jsonData.key).to.eql('success');",
+									"});",
+									"",
+									"pm.test('Data contains account object', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('object');",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('user_id');",
+									"    pm.expect(jsonData.data).to.have.property('bank_name');",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -758,27 +719,27 @@
 							"formdata": [
 								{
 									"key": "bank_name",
-									"value": "Updated Bank Name",
+									"value": "Updated Bank Inc",
 									"type": "text",
-									"description": "Optional. String type. Maximum 50 characters. Name of the bank. Only sent if updating this field."
+									"description": "Bank name. Optional. Must be a string with maximum 50 characters. Only include if updating this field."
 								},
 								{
 									"key": "bank_account_name",
-									"value": "John Updated",
+									"value": "John Doe Updated",
 									"type": "text",
-									"description": "Optional. String type. Maximum 100 characters. Account holder's name. Only sent if updating this field."
+									"description": "Account holder name. Optional. Must be a string with maximum 100 characters. Only include if updating this field."
 								},
 								{
 									"key": "bank_account_number",
 									"value": "9876543210",
 									"type": "text",
-									"description": "Optional. String type. Maximum 50 characters. Bank account number. Only sent if updating this field."
+									"description": "Bank account number. Optional. Must be a string with maximum 50 characters. Only include if updating this field."
 								},
 								{
 									"key": "bank_iban_number",
 									"value": "US64SVBKUS6S3300958879",
 									"type": "text",
-									"description": "Optional. String type. Maximum 50 characters. IBAN number. Only sent if updating this field."
+									"description": "IBAN number. Optional. Must be a string with maximum 50 characters. Only include if updating this field."
 								}
 							]
 						},
@@ -807,7 +768,7 @@
 								}
 							]
 						},
-						"description": "## Documentation\n\n### Description\nUpdates an existing account's information. All fields are optional - only include the fields you want to update (partial updates supported). The account must belong to the specified user from the route parameter. Balance field cannot be updated via this endpoint (only through transactions).\n\n### Notes\n- No authentication required\n- All fields are optional (partial updates supported)\n- Only send the fields you want to update\n- Account must belong to the user specified in the route (ownership verification)\n- Balance field is NOT included in update (only changed through transactions)\n- If account is not found or doesn't belong to user, returns failure response with status 400\n- Response follows ResponseTrait standard format\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts/{account}`\n- **Method**: `PUT`\n- **Content-Type**: `multipart/form-data`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID (must own the account) |\n  | account | integer | Yes | Account ID to update |\n- **Body Parameters**:\n  | Key | Type | Validation Rules | Description |\n  |-----|------|------------------|-------------|\n  | bank_name | string | sometimes, string, max:50 | Bank name (maximum 50 characters) |\n  | bank_account_name | string | sometimes, string, max:100 | Account holder name (maximum 100 characters) |\n  | bank_account_number | string | sometimes, string, max:50 | Bank account number (maximum 50 characters) |\n  | bank_iban_number | string | sometimes, string, max:50 | IBAN number (maximum 50 characters) |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key (\"success\" or \"failure\") |\n| msg | string | Response message in Arabic |\n| data | object | Updated account object |\n\n#### Account Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | Account unique identifier |\n| bank_name | string | Bank name |\n| bank_account_name | string | Account holder name |\n| bank_account_number | string | Bank account number |\n| bank_iban_number | string | IBAN number |\n| balance | decimal | Account balance (unchanged) |\n| created_at | string | ISO 8601 timestamp of creation |\n| updated_at | string | ISO 8601 timestamp of last update |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"bank_name\": \"Updated Bank Name\",\n        \"bank_account_name\": \"John Updated\",\n        \"bank_account_number\": \"9876543210\",\n        \"bank_iban_number\": \"US64SVBKUS6S3300958879\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T11:00:00.000000Z\"\n    }\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Account updated successfully\n- `400 Bad Request`: Failure - Account not found, doesn't belong to user, or error occurred\n- `422 Unprocessable Entity`: Validation failed - Check errors object for field-specific messages"
+						"description": "## Documentation\n\n### Description\nUpdates an existing account by its unique identifier for a specific user. All fields are optional - only include the fields you want to update. The account must belong to the specified user, otherwise an error is returned. Note: Balance cannot be updated through this endpoint (balance updates are restricted to transactions only).\n\n### Notes\n- No authentication required\n- User ID must exist\n- Account must belong to the specified user (ownership verification)\n- All fields are optional (use 'sometimes' validation)\n- Balance field is NOT allowed in update (excluded from validation rules)\n- Balance can only be updated through transactions, not directly\n- Response follows ResponseTrait standard format\n- Account is returned using AccountResource for consistent formatting\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts/{account}`\n- **Method**: `PUT`\n- **Content-Type**: `multipart/form-data`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID that owns the account |\n  | account | integer | Yes | Account unique identifier |\n\n#### Body Parameters\n| Key | Type | Required | Validation Rules |\n|-----|------|----------|-----------------|\n| bank_name | string | No | Sometimes, string, max:50 |\n| bank_account_name | string | No | Sometimes, string, max:100 |\n| bank_account_number | string | No | Sometimes, string, max:50 |\n| bank_iban_number | string | No | Sometimes, string, max:50 |\n\n**Note**: Balance field is NOT allowed in update requests.\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key, always \"success\" for 200 |\n| msg | string | Response message in Arabic, default \"تم بنجاح\" |\n| data | object | Updated account object |\n\n#### Account Object Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| id | integer | Account unique identifier |\n| user_id | integer | User ID that owns this account |\n| bank_name | string | Bank name (max 50 characters) |\n| bank_account_name | string | Account holder name (max 100 characters) |\n| bank_account_number | string | Bank account number (max 50 characters) |\n| bank_iban_number | string | IBAN number (max 50 characters) |\n| balance | decimal | Account balance (decimal with 2 decimal places, minimum 0) |\n| created_at | string | Formatted creation timestamp (Y-m-d H:i:s) |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"user_id\": 1,\n        \"bank_name\": \"Updated Bank Inc\",\n        \"bank_account_name\": \"John Doe Updated\",\n        \"bank_account_number\": \"9876543210\",\n        \"bank_iban_number\": \"US64SVBKUS6S3300958879\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30 10:00:00\"\n    }\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Account updated and returned\n- `400 Bad Request`: Failure - User not found, account not found, or ownership mismatch\n- `422 Unprocessable Entity`: Validation errors - Laravel validation error structure"
 					},
 					"response": [
 						{
@@ -826,12 +787,12 @@
 									"formdata": [
 										{
 											"key": "bank_name",
-											"value": "Updated Bank Name",
+											"value": "Updated Bank Inc",
 											"type": "text"
 										},
 										{
 											"key": "bank_account_name",
-											"value": "John Updated",
+											"value": "John Doe Updated",
 											"type": "text"
 										}
 									]
@@ -860,7 +821,54 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"bank_name\": \"Updated Bank Name\",\n        \"bank_account_name\": \"John Updated\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30T10:00:00.000000Z\",\n        \"updated_at\": \"2026-01-30T11:00:00.000000Z\"\n    }\n}"
+							"body": "{\n    \"key\": \"success\",\n    \"msg\": \"تم بنجاح\",\n    \"data\": {\n        \"id\": 1,\n        \"user_id\": 1,\n        \"bank_name\": \"Updated Bank Inc\",\n        \"bank_account_name\": \"John Doe Updated\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_iban_number\": \"GB82WEST12345698765432\",\n        \"balance\": \"5000.00\",\n        \"created_at\": \"2026-01-30 10:00:00\"\n    }\n}"
+						},
+						{
+							"name": "Error - Validation Failed",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "bank_name",
+											"value": "A very long bank name that exceeds the maximum allowed length of 50 characters",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users/1/accounts/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"1",
+										"accounts",
+										"1"
+									]
+								}
+							},
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"The bank name may not be greater than 50 characters.\",\n    \"errors\": {\n        \"bank_name\": [\"The bank name may not be greater than 50 characters.\"]\n    }\n}"
 						},
 						{
 							"name": "Error - Account Not Found",
@@ -878,7 +886,7 @@
 									"formdata": [
 										{
 											"key": "bank_name",
-											"value": "Updated Bank Name",
+											"value": "Updated Bank Inc",
 											"type": "text"
 										}
 									]
@@ -910,7 +918,7 @@
 							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"Account not found with ID: 999\",\n    \"data\": []\n}"
 						},
 						{
-							"name": "Error - Account Ownership Mismatch",
+							"name": "Error - Ownership Mismatch",
 							"originalRequest": {
 								"method": "PUT",
 								"header": [
@@ -925,7 +933,7 @@
 									"formdata": [
 										{
 											"key": "bank_name",
-											"value": "Updated Bank Name",
+											"value": "Updated Bank Inc",
 											"type": "text"
 										}
 									]
@@ -954,54 +962,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"الحساب لا ينتمي إلى هذا المستخدم\",\n    \"data\": []\n}"
-						},
-						{
-							"name": "Error - Validation Failed",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "bank_name",
-											"value": "This is a very long bank name that exceeds the maximum allowed length of 50 characters",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{base_url}}/api/users/1/accounts/1",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"api",
-										"users",
-										"1",
-										"accounts",
-										"1"
-									]
-								}
-							},
-							"status": "Unprocessable Entity",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"message\": \"The given data was invalid.\",\n    \"errors\": {\n        \"bank_name\": [\"The bank name must not be greater than 50 characters.\"]\n    }\n}"
+							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"Account does not belong to this user\",\n    \"data\": []\n}"
 						}
 					]
 				},
@@ -1023,36 +984,22 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if (pm.response.code === 200) {",
-									"    pm.test('Status code is 200', function () {",
-									"        pm.response.to.have.status(200);",
-									"    });",
-									"    ",
-									"    pm.test('Response has correct structure', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData).to.have.property('key');",
-									"        pm.expect(jsonData).to.have.property('msg');",
-									"        pm.expect(jsonData).to.have.property('data');",
-									"        pm.expect(jsonData.key).to.eql('success');",
-									"    });",
-									"    ",
-									"    pm.test('Success message is present', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData.msg).to.include('حذف');",
-									"    });",
-									"} else {",
-									"    pm.test('Status code is 400', function () {",
-									"        pm.response.to.have.status(400);",
-									"    });",
-									"    ",
-									"    pm.test('Failure response structure', function () {",
-									"        const jsonData = pm.response.json();",
-									"        pm.expect(jsonData).to.have.property('key');",
-									"        pm.expect(jsonData).to.have.property('msg');",
-									"        pm.expect(jsonData).to.have.property('data');",
-									"        pm.expect(jsonData.key).to.eql('failure');",
-									"    });",
-									"}"
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has correct structure', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('key');",
+									"    pm.expect(jsonData).to.have.property('msg');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"    pm.expect(jsonData.key).to.eql('success');",
+									"});",
+									"",
+									"pm.test('Success message is correct', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.msg).to.eql('تم حذف الحساب بنجاح');",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -1092,7 +1039,7 @@
 								}
 							]
 						},
-						"description": "## Documentation\n\n### Description\nSoft deletes an account by its unique identifier. The account is marked as deleted (soft delete) but not permanently removed from the database. The account must belong to the specified user from the route parameter. Soft-deleted accounts are excluded from list and get operations but can be restored if needed.\n\n### Notes\n- No authentication required\n- This is a soft delete operation (not permanent deletion)\n- Account must belong to the user specified in the route (ownership verification)\n- Soft-deleted accounts are excluded from list and get operations\n- If account is not found or doesn't belong to user, returns failure response with status 400\n- Response follows ResponseTrait standard format\n- The deleted_at timestamp is set on the account record\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts/{account}`\n- **Method**: `DELETE`\n- **Content-Type**: `application/json`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID (must own the account) |\n  | account | integer | Yes | Account ID to delete |\n- **Body Parameters**: None\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key (\"success\" or \"failure\") |\n| msg | string | Response message in Arabic |\n| data | array | Empty array (always []) |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم حذف الحساب بنجاح\",\n    \"data\": []\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Account soft deleted successfully\n- `400 Bad Request`: Failure - Account not found, doesn't belong to user, or error occurred"
+						"description": "## Documentation\n\n### Description\nSoft deletes an account by its unique identifier for a specific user. The account is not physically removed from the database but marked as deleted. The account will be excluded from future queries. The account must belong to the specified user, otherwise an error is returned.\n\n### Notes\n- No authentication required\n- User ID must exist\n- Account must belong to the specified user (ownership verification)\n- Performs soft delete (not physical deletion)\n- Account will be excluded from future queries\n- Response follows ResponseTrait standard format\n\n### Request\n- **URL**: `{{base_url}}/api/users/{user}/accounts/{account}`\n- **Method**: `DELETE`\n- **Content-Type**: `application/json`\n- **URL Parameters**:\n  | Parameter | Type | Required | Description |\n  |-----------|------|----------|-------------|\n  | user | integer | Yes | User ID that owns the account |\n  | account | integer | Yes | Account unique identifier |\n\n### Response\n\n#### Response Structure\n| Key | Type | Description |\n|-----|------|-------------|\n| key | string | Response status key, always \"success\" for 200 |\n| msg | string | Response message in Arabic: \"تم حذف الحساب بنجاح\" |\n| data | array | Empty array |\n\n#### Example Response (200 OK)\n```json\n{\n    \"key\": \"success\",\n    \"msg\": \"تم حذف الحساب بنجاح\",\n    \"data\": []\n}\n```\n\n#### Status Codes\n- `200 OK`: Success - Account soft-deleted\n- `400 Bad Request`: Failure - User not found, account not found, or ownership mismatch"
 					},
 					"response": [
 						{
@@ -1170,7 +1117,7 @@
 							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"Account not found with ID: 999\",\n    \"data\": []\n}"
 						},
 						{
-							"name": "Error - Account Ownership Mismatch",
+							"name": "Error - Ownership Mismatch",
 							"originalRequest": {
 								"method": "DELETE",
 								"header": [
@@ -1204,19 +1151,11 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"الحساب لا ينتمي إلى هذا المستخدم\",\n    \"data\": []\n}"
+							"body": "{\n    \"key\": \"failure\",\n    \"msg\": \"Account does not belong to this user\",\n    \"data\": []\n}"
 						}
 					]
 				}
-			],
-			"description": "Account management endpoints for CRUD operations (nested under users)"
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost:8000",
-			"type": "string"
+			]
 		}
 	]
 }

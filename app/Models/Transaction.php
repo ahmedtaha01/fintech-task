@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,6 +24,8 @@ class Transaction extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'payload' => 'array',
+        'sender_account_id' => 'integer',
+        'receiver_account_id' => 'integer',
     ];
 
     public function user()
@@ -38,5 +41,10 @@ class Transaction extends Model
     public function receiverAccount()
     {
         return $this->belongsTo(Account::class, 'account_receiver_id');
+    }
+
+    public function getCreatedAtFormattedAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('Y-m-d H:i:s');
     }
 }
